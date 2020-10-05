@@ -9,7 +9,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   // the actual handler inside a new Promise in order to use async/await.
   new Promise(async (resolve, reject) => {
     if (request.type === INBOUND_INITIALIZE) {
-      await enablePageActionForTab(sender.tab);
+      await initializeExtensionForTab(sender.tab);
       return resolve();
     }
 
@@ -36,6 +36,34 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   // https://github.com/mozilla/webextension-polyfill/issues/130
   return true;
 });
+
+function initializeExtensionForTab(tab) {
+  return new Promise((resolve) => {
+    // We're listening for tab updates in the background script instead of the
+    // content script because the latter cannot directly access the info about
+    // its current tab.
+    const onUpdatedListener = async (tabId, changeInfo, changedTab) => {
+      const TAB_STATUS_COMPLETE = 'complete';
+      if (tab.id === tabId && changedTab.status === TAB_STATUS_COMPLETE) {
+        // Google Meet meeting URLs are in the format "https://meet.google.com/abc-defg-hij".
+        // We want the plugin to be available only in a meeting.
+        const pattern = /meet\.google\.com\/(\w+)\-(\w+)\-(\w+)/;
+        if (pattern.test(changedTab.url)) {
+          await enablePageActionForTab(tab);
+          chrome.tabs.onUpdated.removeListener(onUpdatedListener);
+          resolve();
+        }
+
+        // TODO: We additionally need to check if the user has already joined
+        // the meeting, since the URL is going to be the same when they already
+        // joined and when they are still about to join the meeting. But this
+        // check can be done when the extension is activated by clicking on the
+        // page action icon.
+      }
+    };
+    chrome.tabs.onUpdated.addListener(onUpdatedListener);
+  });
+}
 
 function enablePageActionForTab(tab) {
   return new Promise((resolve) => {
