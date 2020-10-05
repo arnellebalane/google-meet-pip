@@ -15,6 +15,13 @@
     "default_popup": "src/popup.html"
   },
 
+  "content_scripts": [
+    {
+      "matches": ["https://meet.google.com/*"],
+      "js": ["src/content-script.js"]
+    }
+  ],
+
   "icons": {
     "16": "assets/icon-16.png",
     "48": "assets/icon-48.png",
