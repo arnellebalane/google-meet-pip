@@ -1,0 +1,10 @@
+{
+  "name": "google-meet-pip",
+  "version": "1.0.0",
+  "description": "Display a Google Meet video in a Picture-in-Picture window",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "Arnelle Balane <arnellebalane@gmail.com> (https://arnellebalane.com/)",
+  "license": "MIT"
+}
