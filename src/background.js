@@ -1,14 +1,20 @@
-const INBOUND_INITIALIZE = 'INBOUND_INITIALIZE';
+const CONTENT_SCRIPT = {
+  INITIALIZE: 'CONTENT_SCRIPT_INITIALIZE',
+};
+const PAGE_ACTION = {
+  REQUEST_PARTICIPANTS_LIST: 'PAGE_ACTION_REQUEST_PARTICIPANTS_LIST',
+};
+
 const STATUS_SUCCESS = 'SUCCESS';
 const STATUS_FAILED = 'FAILED';
-const ERR_UNKNOWN_TYPE = 'ERR_UNKNOWN_TYPE';
+const ERROR_UNKNOWN_TYPE = 'ERR_UNKNOWN_TYPE';
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   // It seems we can't use async functions to handle message events, otherwise
   // the connection to the sender will be closed prematurely. We're wrapping
   // the actual handler inside a new Promise in order to use async/await.
   new Promise(async (resolve, reject) => {
-    if (request.type === INBOUND_INITIALIZE) {
+    if (request.type === CONTENT_SCRIPT.INITIALIZE) {
       await initializeExtensionForTab(sender.tab);
       return resolve();
     }

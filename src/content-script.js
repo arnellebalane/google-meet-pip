@@ -1,3 +1,5 @@
-const INBOUND_INITIALIZE = 'INBOUND_INITIALIZE';
+const CONTENT_SCRIPT = {
+  INITIALIZE: 'CONTENT_SCRIPT_INITIALIZE',
+};
 
-chrome.runtime.sendMessage({ type: INBOUND_INITIALIZE });
+chrome.runtime.sendMessage({ type: CONTENT_SCRIPT.INITIALIZE });
