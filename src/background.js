@@ -1,5 +1,6 @@
 const CONTENT_SCRIPT = {
   INITIALIZE: 'CONTENT_SCRIPT_INITIALIZE',
+  REQUEST_PARTICIPANTS_LIST: 'CONTENT_SCRIPT_REQUEST_PARTICIPANTS_LIST',
 };
 const PAGE_ACTION = {
   REQUEST_PARTICIPANTS_LIST: 'PAGE_ACTION_REQUEST_PARTICIPANTS_LIST',
@@ -7,16 +8,25 @@ const PAGE_ACTION = {
 
 const STATUS_SUCCESS = 'SUCCESS';
 const STATUS_FAILED = 'FAILED';
-const ERROR_UNKNOWN_TYPE = 'ERR_UNKNOWN_TYPE';
+const ERROR_UNKNOWN_TYPE = 'ERROR_UNKNOWN_TYPE';
+const ERROR_NO_ACTIVE_TAB = 'ERROR_NO_ACTIVE_TAB';
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   // It seems we can't use async functions to handle message events, otherwise
   // the connection to the sender will be closed prematurely. We're wrapping
   // the actual handler inside a new Promise in order to use async/await.
   new Promise(async (resolve, reject) => {
-    if (request.type === CONTENT_SCRIPT.INITIALIZE) {
-      await initializeExtensionForTab(sender.tab);
-      return resolve();
+    switch (request.type) {
+      case CONTENT_SCRIPT.INITIALIZE:
+        return initializeExtensionForTab(sender.tab).then(resolve);
+      case PAGE_ACTION.REQUEST_PARTICIPANTS_LIST:
+        // Messages from page action script doesn't have a sender, so we need
+        // to identify the active tab in the active window ourselves.
+        const activeTab = await getActiveTab();
+        if (!activeTab) {
+          return reject(ERROR_NO_ACTIVE_TAB);
+        }
+        return getParticipantsList(activeTab).then(resolve, reject);
     }
 
     reject(ERROR_UNKNOWN_TYPE);
@@ -29,10 +39,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       sendResponse(response);
     })
     .catch((errorType) => {
-      const response = {
-        status: STATUS_FAILED,
-        error: errorType,
-      };
+      const response = { status: STATUS_FAILED };
+      if (errorType) {
+        response.error = errorType;
+      }
       sendResponse(response);
     });
 
@@ -74,5 +84,27 @@ function initializeExtensionForTab(tab) {
 function enablePageActionForTab(tab) {
   return new Promise((resolve) => {
     chrome.pageAction.show(tab.id, resolve);
+  });
+}
+
+function getActiveTab() {
+  return new Promise((resolve) => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      resolve(tabs[0] || null);
+    });
+  });
+}
+
+function getParticipantsList(tab) {
+  return new Promise((resolve, reject) => {
+    const message = { type: CONTENT_SCRIPT.REQUEST_PARTICIPANTS_LIST };
+    chrome.tabs.sendMessage(tab.id, message, (response) => {
+      switch (response.status) {
+        case STATUS_SUCCESS:
+          return resolve(response.data);
+        case STATUS_FAILED:
+          return reject(response.error);
+      }
+    });
   });
 }

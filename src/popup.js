@@ -1,2 +1,7 @@
-console.log('hello from popup.js');
-document.body.style.backgroundColor = 'red';
+const PAGE_ACTION = {
+  REQUEST_PARTICIPANTS_LIST: 'PAGE_ACTION_REQUEST_PARTICIPANTS_LIST',
+};
+
+chrome.runtime.sendMessage({ type: PAGE_ACTION.REQUEST_PARTICIPANTS_LIST }, (response) => {
+  console.log(response);
+});
