@@ -3,12 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./popup.css" />
     <title>Google Meet PiP</title>
   </head>
 
   <body>
-    <h1>Google Meet PiP</h1>
-    <p>Display a Google Meet video in a Picture-in-Picture window</p>
+    <div class="loading-screen hidden"></div>
+
+    <div class="selection-screen">
+      <ul>
+        <li>You</li>
+        <li>Emmanuel Lodovice</li>
+        <li>Faye Lomente</li>
+      </ul>
+    </div>
 
     <script src="./popup.js"></script>
   </body>
