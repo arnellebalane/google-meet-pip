@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { VueLoaderPlugin } = require('vue-loader');
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -20,6 +21,11 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.vue$/,
+        exclude: /node_modules/,
+        loader: 'vue-loader',
+      },
+      {
         test: /\.js$/,
         exclude: /node_modules/,
         loader: 'babel-loader',
@@ -38,5 +44,7 @@ module.exports = {
       filename: 'popup.html',
       chunks: ['popup'],
     }),
+
+    new VueLoaderPlugin(),
   ],
 };
