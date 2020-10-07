@@ -1,15 +1,11 @@
-const CONTENT_SCRIPT = {
-  INITIALIZE: 'CONTENT_SCRIPT_INITIALIZE',
-  REQUEST_PARTICIPANTS_LIST: 'CONTENT_SCRIPT_REQUEST_PARTICIPANTS_LIST',
-};
-const PAGE_ACTION = {
-  REQUEST_PARTICIPANTS_LIST: 'PAGE_ACTION_REQUEST_PARTICIPANTS_LIST',
-};
-
-const STATUS_SUCCESS = 'SUCCESS';
-const STATUS_FAILED = 'FAILED';
-const ERROR_UNKNOWN_TYPE = 'ERROR_UNKNOWN_TYPE';
-const ERROR_NO_ACTIVE_TAB = 'ERROR_NO_ACTIVE_TAB';
+import {
+  CONTENT_SCRIPT,
+  PAGE_ACTION,
+  STATUS_SUCCESS,
+  STATUS_FAILED,
+  ERROR_UNKNOWN_TYPE,
+  ERROR_NO_ACTIVE_TAB,
+} from './_constants';
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   // It seems we can't use async functions to handle message events, otherwise

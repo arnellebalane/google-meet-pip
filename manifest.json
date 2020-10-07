@@ -12,18 +12,18 @@
       "128": "assets/icon-128.png"
     },
     "default_title": "Google Meet PiP",
-    "default_popup": "src/popup.html"
+    "default_popup": "dist/popup.html"
   },
 
   "content_scripts": [
     {
       "matches": ["https://meet.google.com/*"],
-      "js": ["src/content-script.js"]
+      "js": ["dist/content-script.js"]
     }
   ],
 
   "background": {
-    "scripts": ["src/background.js"],
+    "scripts": ["dist/background.js"],
     "persistent": false
   },
 
@@ -33,5 +33,7 @@
     "128": "assets/icon-128.png"
   },
 
-  "permissions": ["activeTab", "tabs"]
+  "permissions": ["activeTab", "tabs"],
+
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }
