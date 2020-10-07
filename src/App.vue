@@ -4,7 +4,6 @@
   <div v-if="state === STATE.SELECTION" class="selection-screen">
     <p>Choose the participant to place in Picture-in-Picture window</p>
     <small>Only the participants that are visible on your screen can be selected</small>
-
     <ul>
       <li v-for="participant in participants" :key="participant.name" :class="{ disabled: !participant.active }">
         {{ participant.name }}
@@ -25,6 +24,7 @@
 </template>
 
 <script>
+import { ref, onMounted } from 'vue';
 import { PAGE_ACTION, STATUS_SUCCESS, STATUS_FAILED } from './lib/constants';
 
 const STATE = {
@@ -34,34 +34,31 @@ const STATE = {
 };
 
 export default {
-  data() {
-    return {
-      STATE,
-      state: STATE.LOADING,
-      participants: null,
-      error: null,
-    };
-  },
+  setup() {
+    let state = ref(STATE.LOADING);
 
-  async mounted() {
-    await this.fetchParticipantsList();
-  },
-
-  methods: {
-    async fetchParticipantsList() {
+    let participants = ref([]);
+    const fetchParticipantsList = () => {
       return new Promise(async (resolve) => {
         chrome.runtime.sendMessage({ type: PAGE_ACTION.REQUEST_PARTICIPANTS_LIST }, (response) => {
           if (response.status === STATUS_SUCCESS) {
-            this.participants = response.data;
-            this.state = STATE.SELECTION;
+            participants.value = response.data;
+            state.value = STATE.SELECTION;
           } else if (response.status === STATUS_FAILED) {
-            this.error = response.error;
-            this.state = STATE.ERROR;
+            state.value = STATE.ERROR;
           }
           resolve();
         });
       });
-    },
+    };
+
+    onMounted(fetchParticipantsList);
+
+    return {
+      STATE,
+      state,
+      participants,
+    };
   },
 };
 </script>
