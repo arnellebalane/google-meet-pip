@@ -23,7 +23,8 @@ export function createChromeMessageHandler(handler) {
       .catch((error) => {
         const response = { status: STATUS_FAILED };
         if (error) {
-          response.error = error.message;
+          // Handle both Error objects and error strings.
+          response.error = error.message || error;
         }
         sendResponse(response);
       });
