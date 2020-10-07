@@ -5,48 +5,23 @@ import {
   STATUS_FAILED,
   ERROR_UNKNOWN_TYPE,
   ERROR_NO_ACTIVE_TAB,
-} from './_constants';
+} from './lib/constants';
+import { createChromeMessageHandler } from './lib/chrome-message-handler';
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  // It seems we can't use async functions to handle message events, otherwise
-  // the connection to the sender will be closed prematurely. We're wrapping
-  // the actual handler inside a new Promise in order to use async/await.
-  new Promise(async (resolve, reject) => {
-    switch (request.type) {
-      case CONTENT_SCRIPT.INITIALIZE:
-        return initializeExtensionForTab(sender.tab).then(resolve);
-      case PAGE_ACTION.REQUEST_PARTICIPANTS_LIST:
-        // Messages from page action script doesn't have a sender, so we need
-        // to identify the active tab in the active window ourselves.
-        const activeTab = await getActiveTab();
-        if (!activeTab) {
-          return reject(ERROR_NO_ACTIVE_TAB);
-        }
-        return getParticipantsList(activeTab).then(resolve, reject);
-    }
-
-    reject(ERROR_UNKNOWN_TYPE);
-  })
-    .then((data) => {
-      const response = { status: STATUS_SUCCESS };
-      if (data) {
-        response.data = data;
+createChromeMessageHandler(async (message, sender) => {
+  switch (message.type) {
+    case CONTENT_SCRIPT.INITIALIZE:
+      return initializeExtensionForTab(sender.tab);
+    case PAGE_ACTION.REQUEST_PARTICIPANTS_LIST:
+      // Messages from page action script doesn't have a sender, so we need
+      // to identify the active tab in the active window ourselves.
+      const activeTab = await getActiveTab();
+      if (!activeTab) {
+        throw new Error(ERROR_NO_ACTIVE_TAB);
       }
-      sendResponse(response);
-    })
-    .catch((errorType) => {
-      const response = { status: STATUS_FAILED };
-      if (errorType) {
-        response.error = errorType;
-      }
-      sendResponse(response);
-    });
-
-  // Since we need to wait for the promise above to get fulfilled in order to
-  // send a response, we return true to indicate that we will send a response
-  // at a later time.
-  // https://github.com/mozilla/webextension-polyfill/issues/130
-  return true;
+      return getParticipantsList(activeTab);
+  }
+  throw new Error(ERROR_UNKNOWN_TYPE);
 });
 
 function initializeExtensionForTab(tab) {
@@ -65,12 +40,6 @@ function initializeExtensionForTab(tab) {
           chrome.tabs.onUpdated.removeListener(onUpdatedListener);
           resolve();
         }
-
-        // TODO: We additionally need to check if the user has already joined
-        // the meeting, since the URL is going to be the same when they already
-        // joined and when they are still about to join the meeting. But this
-        // check can be done when the extension is activated by clicking on the
-        // page action icon.
       }
     };
     chrome.tabs.onUpdated.addListener(onUpdatedListener);

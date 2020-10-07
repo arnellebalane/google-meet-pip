@@ -1,44 +1,19 @@
-import { CONTENT_SCRIPT, STATUS_SUCCESS, STATUS_FAILED, ERROR_UNKNOWN_TYPE, ERROR_NOT_IN_MEETING } from './_constants';
+import { CONTENT_SCRIPT, ERROR_UNKNOWN_TYPE, ERROR_NOT_IN_MEETING } from './lib/constants';
+import { createChromeMessageHandler } from './lib/chrome-message-handler';
+
+createChromeMessageHandler(async (message, sender) => {
+  switch (message.type) {
+    case CONTENT_SCRIPT.REQUEST_PARTICIPANTS_LIST:
+      const participants = getParticipantsList();
+      if (participants.length > 0) {
+        return participants;
+      }
+      throw new Error(ERROR_NOT_IN_MEETING);
+  }
+  throw new Error(ERROR_UNKNOWN_TYPE);
+});
 
 chrome.runtime.sendMessage({ type: CONTENT_SCRIPT.INITIALIZE });
-
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  // It seems we can't use async functions to handle message events, otherwise
-  // the connection to the sender will be closed prematurely. We're wrapping
-  // the actual handler inside a new Promise in order to use async/await.
-  new Promise(async (resolve, reject) => {
-    switch (message.type) {
-      case CONTENT_SCRIPT.REQUEST_PARTICIPANTS_LIST:
-        const participants = getParticipantsList();
-        if (participants.length > 0) {
-          return resolve(participants);
-        }
-        return reject(ERROR_NOT_IN_MEETING);
-    }
-
-    reject(ERROR_UNKNOWN_TYPE);
-  })
-    .then((data) => {
-      const response = { status: STATUS_SUCCESS };
-      if (data) {
-        response.data = data;
-      }
-      sendResponse(response);
-    })
-    .catch((errorType) => {
-      const response = { status: STATUS_FAILED };
-      if (errorType) {
-        response.error = errorType;
-      }
-      sendResponse(response);
-    });
-
-  // Since we need to wait for the promise above to get fulfilled in order to
-  // send a response, we return true to indicate that we will send a response
-  // at a later time.
-  // https://github.com/mozilla/webextension-polyfill/issues/130
-  return true;
-});
 
 function getParticipantsList() {
   const videos = [...document.querySelectorAll('video')];
