@@ -1,6 +1,8 @@
-import { PAGE_ACTION } from './lib/constants';
+import { createApp, h } from 'vue';
+import App from './App.vue';
 import './popup.css';
 
-chrome.runtime.sendMessage({ type: PAGE_ACTION.REQUEST_PARTICIPANTS_LIST }, (response) => {
-  console.log(response);
+const app = createApp({
+  render: () => h(App),
 });
+app.mount('#app');

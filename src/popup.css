@@ -23,17 +23,17 @@ body {
 /* LOADING SCREEN */
 
 .loading-screen {
-  height: 80px;
+  height: 32px;
   position: relative;
 }
 
 .loading-screen::before {
   content: '';
   position: absolute;
-  top: calc(50% - 12px);
-  left: calc(50% - 12px);
-  width: 24px;
-  height: 24px;
+  top: calc(50% - 8px);
+  left: calc(50% - 8px);
+  width: 16px;
+  height: 16px;
   border: 2px solid #dedede;
   border-top-color: transparent;
   border-radius: 50%;
