@@ -7,7 +7,7 @@
 
 body {
   width: 250px;
-  padding: 4px;
+  padding: 8px;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji',
     'Segoe UI Emoji', 'Segoe UI Symbol';
@@ -23,18 +23,18 @@ body {
 /* LOADING SCREEN */
 
 .loading-screen {
-  height: 32px;
+  height: 68px;
   position: relative;
 }
 
 .loading-screen::before {
   content: '';
   position: absolute;
-  top: calc(50% - 8px);
-  left: calc(50% - 8px);
-  width: 16px;
-  height: 16px;
-  border: 2px solid #dedede;
+  top: calc(50% - 12px);
+  left: calc(50% - 12px);
+  width: 24px;
+  height: 24px;
+  border: 2px solid #00796b;
   border-top-color: transparent;
   border-radius: 50%;
   animation: rotate 1s linear infinite;
@@ -42,20 +42,45 @@ body {
 
 /* SELECTION SCREEN */
 
+.selection-screen small {
+  display: block;
+  margin-top: 8px;
+  margin-bottom: 12px;
+  color: #555;
+}
+
 .selection-screen ul {
   padding: 0;
+  padding-top: 8px;
+  margin: 0 -8px;
+  border-top: 1px solid #eee;
   list-style: none;
 }
 
 .selection-screen li {
-  border-radius: 4px;
   padding: 6px 8px;
   cursor: pointer;
-  transition: background-color 250ms ease;
 }
 
-.selection-screen li:hover {
-  background-color: #f0f0f0;
+.selection-screen li:not(.disabled):hover {
+  color: #fff;
+  background-color: #00796b;
+}
+
+.selection-screen li.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* ERROR SCREEN */
+
+.error-screen svg {
+  display: block;
+  margin: auto;
+}
+
+.error-screen p {
+  margin-top: 8px;
 }
 
 /* ANIMATIONS */
