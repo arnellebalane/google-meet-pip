@@ -1,30 +1,34 @@
 import { CONTENT_SCRIPT, ERROR } from './lib/constants';
 import { onMessageChromeRuntime, sendMessageToBackgroundScript } from './lib/extension-utils';
 
-onMessageChromeRuntime(async (message, sender) => {
-  switch (message.type) {
-    case CONTENT_SCRIPT.REQUEST_PARTICIPANTS_LIST:
-      const participants = getParticipantsList();
-      if (participants.length > 0) {
-        return participants;
-      }
-      throw new Error(ERROR.NOT_IN_MEETING);
+if (document.pictureInPictureEnabled) {
+  onMessageChromeRuntime(async (message, sender) => {
+    switch (message.type) {
+      case CONTENT_SCRIPT.REQUEST_PARTICIPANTS_LIST:
+        const participants = getParticipantsList();
+        if (participants.length > 0) {
+          return participants;
+        }
+        throw new Error(ERROR.NOT_IN_MEETING);
 
-    case CONTENT_SCRIPT.ACTIVATE_PICTURE_IN_PICTURE:
-      const result = await activatePictureInPicture(message.data.participant);
-      if (result) {
-        return result;
-      }
-      throw new Error(ERROR.OPERATION_FAILED);
+      case CONTENT_SCRIPT.ACTIVATE_PICTURE_IN_PICTURE:
+        const result = await activatePictureInPicture(message.data.participant);
+        if (result) {
+          return result;
+        }
+        throw new Error(ERROR.OPERATION_FAILED);
 
-    case CONTENT_SCRIPT.EXIT_PICTURE_IN_PICTURE:
-      return exitPictureInPicture();
-  }
+      case CONTENT_SCRIPT.EXIT_PICTURE_IN_PICTURE:
+        return exitPictureInPicture();
+    }
 
-  throw new Error(ERROR.UNKNOWN_TYPE);
-});
+    throw new Error(ERROR.UNKNOWN_TYPE);
+  });
 
-sendMessageToBackgroundScript(CONTENT_SCRIPT.INITIALIZE);
+  sendMessageToBackgroundScript(CONTENT_SCRIPT.INITIALIZE);
+} else {
+  console.log('[google-meet-pip] Your browser does not support the Picture-in-Picture API');
+}
 
 function getParticipantsList() {
   const videos = [...document.querySelectorAll('video')];
