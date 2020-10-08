@@ -1,3 +1,3 @@
 # Google Meet PiP
 
-Display a Google Meet video in a Picture-in-Picture window.
+Display a selected Google Meet participant's video in a Picture-in-Picture window.

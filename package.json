@@ -6,7 +6,7 @@
   "scripts": {
     "build": "NODE_ENV=production webpack",
     "watch": "webpack --watch",
-    "zip": "zip -r google-meet-pip.zip manifest.json dist assets"
+    "zip": "zip -r google-meet-pip.zip manifest.json dist assets/icon-*"
   },
   "keywords": [],
   "author": "Arnelle Balane <arnellebalane@gmail.com> (https://arnellebalane.com/)",
