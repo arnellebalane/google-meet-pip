@@ -26,6 +26,7 @@
 <script>
 import { ref, onMounted } from 'vue';
 import { PAGE_ACTION, STATUS_SUCCESS, STATUS_FAILED } from './lib/constants';
+import { sendChromeRuntimeMessage } from './lib/chrome-runtime-utils';
 
 const STATE = {
   LOADING: 'LOADING',
@@ -38,18 +39,13 @@ export default {
     let state = ref(STATE.LOADING);
 
     let participants = ref([]);
-    const fetchParticipantsList = () => {
-      return new Promise(async (resolve) => {
-        chrome.runtime.sendMessage({ type: PAGE_ACTION.REQUEST_PARTICIPANTS_LIST }, (response) => {
-          if (response.status === STATUS_SUCCESS) {
-            participants.value = response.data;
-            state.value = STATE.SELECTION;
-          } else if (response.status === STATUS_FAILED) {
-            state.value = STATE.ERROR;
-          }
-          resolve();
-        });
-      });
+    const fetchParticipantsList = async () => {
+      try {
+        participants.value = await sendChromeRuntimeMessage(PAGE_ACTION.REQUEST_PARTICIPANTS_LIST);
+        state.value = STATE.SELECTION;
+      } catch (error) {
+        state.value = STATE.ERROR;
+      }
     };
 
     onMounted(fetchParticipantsList);

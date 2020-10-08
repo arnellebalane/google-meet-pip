@@ -36,3 +36,16 @@ export function createChromeMessageHandler(handler) {
     return true;
   });
 }
+
+export function sendChromeRuntimeMessage(type, data = null) {
+  return new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage({ type, data }, (response) => {
+      switch (response.status) {
+        case STATUS_SUCCESS:
+          return resolve(response.data);
+        case STATUS_FAILED:
+          return reject(response.error);
+      }
+    });
+  });
+}

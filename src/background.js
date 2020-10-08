@@ -6,12 +6,13 @@ import {
   ERROR_UNKNOWN_TYPE,
   ERROR_NO_ACTIVE_TAB,
 } from './lib/constants';
-import { createChromeMessageHandler } from './lib/chrome-message-handler';
+import { createChromeMessageHandler } from './lib/chrome-runtime-utils';
 
 createChromeMessageHandler(async (message, sender) => {
   switch (message.type) {
     case CONTENT_SCRIPT.INITIALIZE:
       return initializeExtensionForTab(sender.tab);
+
     case PAGE_ACTION.REQUEST_PARTICIPANTS_LIST:
       // Messages from page action script doesn't have a sender, so we need
       // to identify the active tab in the active window ourselves.

@@ -1,5 +1,5 @@
 import { CONTENT_SCRIPT, ERROR_UNKNOWN_TYPE, ERROR_NOT_IN_MEETING } from './lib/constants';
-import { createChromeMessageHandler } from './lib/chrome-message-handler';
+import { createChromeMessageHandler, sendChromeRuntimeMessage } from './lib/chrome-runtime-utils';
 
 createChromeMessageHandler(async (message, sender) => {
   switch (message.type) {
@@ -13,7 +13,7 @@ createChromeMessageHandler(async (message, sender) => {
   throw new Error(ERROR_UNKNOWN_TYPE);
 });
 
-chrome.runtime.sendMessage({ type: CONTENT_SCRIPT.INITIALIZE });
+sendChromeRuntimeMessage(CONTENT_SCRIPT.INITIALIZE);
 
 function getParticipantsList() {
   const videos = [...document.querySelectorAll('video')];
