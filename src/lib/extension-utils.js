@@ -4,30 +4,24 @@ export function onMessageChromeRuntime(handler) {
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     // It seems we can't use async functions to handle message events, otherwise
     // the connection to the sender will be closed prematurely. We're wrapping
-    // the actual handler inside a new Promise in order to use async/await.
-    new Promise(async (resolve, reject) => {
+    // the actual handler inside an IIFE in order to use async/await.
+    (async () => {
       try {
-        const response = await handler(message, sender);
-        resolve(response);
-      } catch (error) {
-        reject(error);
-      }
-    })
-      .then((data) => {
+        const result = await handler(message, sender);
         const response = { status: STATUS.SUCCESS };
-        if (data) {
-          response.data = data;
+        if (result) {
+          response.data = result;
         }
         sendResponse(response);
-      })
-      .catch((error) => {
+      } catch (error) {
         const response = { status: STATUS.FAIL };
         if (error) {
           // Handle both Error objects and error strings.
           response.error = error.message || error;
         }
         sendResponse(response);
-      });
+      }
+    })();
 
     // Since we need to wait for the promise above to get fulfilled in order to
     // send a response, we return true to indicate that we will send a response
