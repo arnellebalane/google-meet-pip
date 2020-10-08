@@ -1,7 +1,7 @@
 import { CONTENT_SCRIPT, PAGE_ACTION, ERROR } from './lib/constants';
-import { createChromeMessageHandler, sendChromeTabsMessage } from './lib/extension-utils';
+import { onMessageChromeRuntime, sendMessageToContentScript } from './lib/extension-utils';
 
-createChromeMessageHandler(async (message, sender) => {
+onMessageChromeRuntime(async (message, sender) => {
   switch (message.type) {
     case CONTENT_SCRIPT.INITIALIZE:
       return initializeExtensionForTab(sender.tab);
@@ -62,9 +62,9 @@ function getActiveTab() {
 }
 
 function getParticipantsList(tab) {
-  return sendChromeTabsMessage(tab.id, CONTENT_SCRIPT.REQUEST_PARTICIPANTS_LIST);
+  return sendMessageToContentScript(tab.id, CONTENT_SCRIPT.REQUEST_PARTICIPANTS_LIST);
 }
 
 function activatePictureInPicture(tab, data) {
-  return sendChromeTabsMessage(tab.id, CONTENT_SCRIPT.ACTIVATE_PICTURE_IN_PICTURE, data);
+  return sendMessageToContentScript(tab.id, CONTENT_SCRIPT.ACTIVATE_PICTURE_IN_PICTURE, data);
 }

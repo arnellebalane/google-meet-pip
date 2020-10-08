@@ -1,7 +1,7 @@
 import { CONTENT_SCRIPT, ERROR } from './lib/constants';
-import { createChromeMessageHandler, sendChromeRuntimeMessage } from './lib/extension-utils';
+import { onMessageChromeRuntime, sendMessageToBackgroundScript } from './lib/extension-utils';
 
-createChromeMessageHandler(async (message, sender) => {
+onMessageChromeRuntime(async (message, sender) => {
   switch (message.type) {
     case CONTENT_SCRIPT.REQUEST_PARTICIPANTS_LIST:
       const participants = getParticipantsList();
@@ -20,7 +20,7 @@ createChromeMessageHandler(async (message, sender) => {
   throw new Error(ERROR.UNKNOWN_TYPE);
 });
 
-sendChromeRuntimeMessage(CONTENT_SCRIPT.INITIALIZE);
+sendMessageToBackgroundScript(CONTENT_SCRIPT.INITIALIZE);
 
 function getParticipantsList() {
   const videos = [...document.querySelectorAll('video')];

@@ -1,6 +1,6 @@
 import { STATUS } from './constants';
 
-export function createChromeMessageHandler(handler) {
+export function onMessageChromeRuntime(handler) {
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     // It seems we can't use async functions to handle message events, otherwise
     // the connection to the sender will be closed prematurely. We're wrapping
@@ -37,7 +37,7 @@ export function createChromeMessageHandler(handler) {
   });
 }
 
-export function sendChromeRuntimeMessage(type, data = null) {
+export function sendMessageToBackgroundScript(type, data = null) {
   return new Promise((resolve, reject) => {
     chrome.runtime.sendMessage({ type, data }, (response) => {
       switch (response.status) {
@@ -50,7 +50,7 @@ export function sendChromeRuntimeMessage(type, data = null) {
   });
 }
 
-export function sendChromeTabsMessage(tabId, type, data = null) {
+export function sendMessageToContentScript(tabId, type, data = null) {
   return new Promise((resolve, reject) => {
     const message = { type, data };
     chrome.tabs.sendMessage(tabId, message, (response) => {

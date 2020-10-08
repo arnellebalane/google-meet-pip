@@ -31,7 +31,7 @@
 <script>
 import { ref, onMounted } from 'vue';
 import { PAGE_ACTION } from './lib/constants';
-import { sendChromeRuntimeMessage } from './lib/extension-utils';
+import { sendMessageToBackgroundScript } from './lib/extension-utils';
 
 const STATE = {
   LOADING: 'LOADING',
@@ -46,7 +46,7 @@ export default {
     let participants = ref([]);
     const fetchParticipantsList = async () => {
       try {
-        participants.value = await sendChromeRuntimeMessage(PAGE_ACTION.REQUEST_PARTICIPANTS_LIST);
+        participants.value = await sendMessageToBackgroundScript(PAGE_ACTION.REQUEST_PARTICIPANTS_LIST);
         state.value = STATE.SELECTION;
       } catch (error) {
         state.value = STATE.ERROR;
@@ -56,7 +56,7 @@ export default {
     const activatePictureInPicture = async (participant) => {
       if (participant.available) {
         try {
-          await sendChromeRuntimeMessage(PAGE_ACTION.ACTIVATE_PICTURE_IN_PICTURE, { participant: participant.id });
+          await sendMessageToBackgroundScript(PAGE_ACTION.ACTIVATE_PICTURE_IN_PICTURE, { participant: participant.id });
         } catch (error) {
           console.error(error);
         }
