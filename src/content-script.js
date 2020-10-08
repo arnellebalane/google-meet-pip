@@ -105,6 +105,10 @@ async function activatePictureInPicture(participant) {
     // easily when participants list is requested again and when exiting PiP.
     video.dataset.gmpipActive = true;
 
+    // When the video leaves PiP mode by directly closing the PiP window,
+    // we need to unmark it as the active video.
+    video.addEventListener('leavepictureinpicture', onLeavePictureInPicture);
+
     return {
       id: participant,
       name: getParticipantNameForVideo(video),
@@ -120,7 +124,12 @@ async function activatePictureInPicture(participant) {
 function exitPictureInPicture() {
   const video = document.querySelector('[data-gmpip-active]');
   if (video) {
+    video.removeEventListener('leavepictureinpicture', onLeavePictureInPicture);
     delete video.dataset.gmpipActive;
   }
   return document.exitPictureInPicture();
+}
+
+function onLeavePictureInPicture(event) {
+  delete event.target.dataset.gmpipActive;
 }
