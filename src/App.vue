@@ -5,7 +5,12 @@
     <p>Choose the participant to place in Picture-in-Picture window</p>
     <small>Only the participants that are visible on your screen can be selected</small>
     <ul>
-      <li v-for="participant in participants" :key="participant.name" :class="{ disabled: !participant.active }">
+      <li
+        v-for="participant in participants"
+        :key="participant.name"
+        :class="{ disabled: !participant.active }"
+        @click="activatePictureInPicture(participant)"
+      >
         {{ participant.name }}
       </li>
     </ul>
@@ -48,12 +53,21 @@ export default {
       }
     };
 
+    const activatePictureInPicture = async (participant) => {
+      try {
+        await sendChromeRuntimeMessage(PAGE_ACTION.ACTIVATE_PICTURE_IN_PICTURE, { participant: participant.id });
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     onMounted(fetchParticipantsList);
 
     return {
       STATE,
       state,
       participants,
+      activatePictureInPicture,
     };
   },
 };

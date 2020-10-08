@@ -1,4 +1,4 @@
-import { CONTENT_SCRIPT, ERROR_UNKNOWN_TYPE, ERROR_NOT_IN_MEETING } from './lib/constants';
+import { CONTENT_SCRIPT, ERROR_UNKNOWN_TYPE, ERROR_NOT_IN_MEETING, ERROR_OPERATION_FAILED } from './lib/constants';
 import { createChromeMessageHandler, sendChromeRuntimeMessage } from './lib/chrome-runtime-utils';
 
 createChromeMessageHandler(async (message, sender) => {
@@ -9,6 +9,13 @@ createChromeMessageHandler(async (message, sender) => {
         return participants;
       }
       throw new Error(ERROR_NOT_IN_MEETING);
+
+    case CONTENT_SCRIPT.ACTIVATE_PICTURE_IN_PICTURE:
+      const result = await activatePictureInPicture(message.data.participant);
+      if (result) {
+        return true;
+      }
+      throw new Error(ERROR_OPERATION_FAILED);
   }
   throw new Error(ERROR_UNKNOWN_TYPE);
 });
@@ -70,4 +77,9 @@ function getParticipantNameForVideo(video) {
     name = children.find((child) => 'selfName' in child.dataset);
   }
   return name ? name.textContent : null;
+}
+
+async function activatePictureInPicture(participant) {
+  console.log({ participant });
+  return true;
 }

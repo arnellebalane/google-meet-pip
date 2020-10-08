@@ -14,14 +14,21 @@ createChromeMessageHandler(async (message, sender) => {
       return initializeExtensionForTab(sender.tab);
 
     case PAGE_ACTION.REQUEST_PARTICIPANTS_LIST:
+    case PAGE_ACTION.ACTIVATE_PICTURE_IN_PICTURE:
       // Messages from page action script doesn't have a sender, so we need
       // to identify the active tab in the active window ourselves.
       const activeTab = await getActiveTab();
       if (!activeTab) {
         throw new Error(ERROR_NO_ACTIVE_TAB);
       }
-      return getParticipantsList(activeTab);
+
+      const handlers = {
+        [PAGE_ACTION.REQUEST_PARTICIPANTS_LIST]: () => getParticipantsList(activeTab),
+        [PAGE_ACTION.ACTIVATE_PICTURE_IN_PICTURE]: () => activatePictureInPicture(activeTab, message.data),
+      };
+      return handlers[message.type]();
   }
+
   throw new Error(ERROR_UNKNOWN_TYPE);
 });
 
@@ -64,6 +71,23 @@ function getActiveTab() {
 function getParticipantsList(tab) {
   return new Promise((resolve, reject) => {
     const message = { type: CONTENT_SCRIPT.REQUEST_PARTICIPANTS_LIST };
+    chrome.tabs.sendMessage(tab.id, message, (response) => {
+      switch (response.status) {
+        case STATUS_SUCCESS:
+          return resolve(response.data);
+        case STATUS_FAILED:
+          return reject(response.error);
+      }
+    });
+  });
+}
+
+function activatePictureInPicture(tab, data) {
+  return new Promise((resolve, reject) => {
+    const message = {
+      type: CONTENT_SCRIPT.ACTIVATE_PICTURE_IN_PICTURE,
+      data,
+    };
     chrome.tabs.sendMessage(tab.id, message, (response) => {
       switch (response.status) {
         case STATUS_SUCCESS:
