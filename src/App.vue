@@ -8,7 +8,7 @@
       <li
         v-for="participant in participants"
         :key="participant.name"
-        :class="{ disabled: !participant.active }"
+        :class="{ disabled: !participant.available }"
         @click="activatePictureInPicture(participant)"
       >
         {{ participant.name }}
@@ -54,7 +54,7 @@ export default {
     };
 
     const activatePictureInPicture = async (participant) => {
-      if (participant.active) {
+      if (participant.available) {
         try {
           await sendChromeRuntimeMessage(PAGE_ACTION.ACTIVATE_PICTURE_IN_PICTURE, { participant: participant.id });
         } catch (error) {

@@ -38,7 +38,7 @@ function getParticipantsList() {
   const results = [];
   for (const name in participants) {
     const videos = participants[name];
-    const active = videos.some(
+    const available = videos.some(
       (video) =>
         /**
          * [1] Google Meet sometimes renders a hidden video element into the
@@ -56,12 +56,12 @@ function getParticipantsList() {
     );
 
     // We assign an identifier to each participant's videos so we can easily
-    // query them later on. Since the names are unique in this case (can be
-    // improved later), using the base64 of the names should be enough.
+    // query them later. Since the names are unique in this case (can be
+    // improved later), using the base64 of the names should be enough for now.
     const id = btoa(name);
     videos.forEach((video) => (video.dataset.gmpipId = id));
 
-    results.push({ id, name, active });
+    results.push({ id, name, available });
   }
 
   return results;
