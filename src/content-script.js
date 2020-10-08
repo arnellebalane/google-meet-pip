@@ -38,6 +38,11 @@ function getParticipantsList() {
   const results = [];
   for (const name in participants) {
     const videos = participants[name];
+
+    // A participant is active if they are the one currently in PiP mode.
+    const active = videos.some((video) => video.dataset.gmpipActive);
+
+    // A participant is available if they have a video enabled.
     const available = videos.some(
       (video) =>
         /**
@@ -61,7 +66,7 @@ function getParticipantsList() {
     const id = btoa(name);
     videos.forEach((video) => (video.dataset.gmpipId = id));
 
-    results.push({ id, name, available });
+    results.push({ id, name, active, available });
   }
 
   return results;
@@ -81,11 +86,17 @@ function getParticipantNameForVideo(video) {
 
 async function activatePictureInPicture(participant) {
   // Find the visible video with the matching data-gmpip-id attribute and
-  // enable Picture-in-Picture for it.
+  // enable PiP for it.
   const videos = [...document.querySelectorAll(`video[data-gmpip-id="${participant}"]`)];
   const video = videos.find((video) => video.style.display !== 'none');
+
   try {
     await video.requestPictureInPicture();
+
+    // Mark the active video that is currently in PiP mode, so we can identify
+    // it easily when participants list is requested again.
+    video.dataset.gmpipActive = true;
+
     return {
       id: participant,
       name: getParticipantNameForVideo(video),
