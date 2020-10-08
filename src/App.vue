@@ -30,7 +30,7 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import { PAGE_ACTION, STATUS_SUCCESS, STATUS_FAILED } from './lib/constants';
+import { PAGE_ACTION } from './lib/constants';
 import { sendChromeRuntimeMessage } from './lib/extension-utils';
 
 const STATE = {

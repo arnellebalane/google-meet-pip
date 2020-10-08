@@ -1,4 +1,4 @@
-import { CONTENT_SCRIPT, ERROR_UNKNOWN_TYPE, ERROR_NOT_IN_MEETING, ERROR_OPERATION_FAILED } from './lib/constants';
+import { CONTENT_SCRIPT, ERROR } from './lib/constants';
 import { createChromeMessageHandler, sendChromeRuntimeMessage } from './lib/extension-utils';
 
 createChromeMessageHandler(async (message, sender) => {
@@ -8,16 +8,16 @@ createChromeMessageHandler(async (message, sender) => {
       if (participants.length > 0) {
         return participants;
       }
-      throw new Error(ERROR_NOT_IN_MEETING);
+      throw new Error(ERROR.NOT_IN_MEETING);
 
     case CONTENT_SCRIPT.ACTIVATE_PICTURE_IN_PICTURE:
       const result = await activatePictureInPicture(message.data.participant);
       if (result) {
         return true;
       }
-      throw new Error(ERROR_OPERATION_FAILED);
+      throw new Error(ERROR.OPERATION_FAILED);
   }
-  throw new Error(ERROR_UNKNOWN_TYPE);
+  throw new Error(ERROR.UNKNOWN_TYPE);
 });
 
 sendChromeRuntimeMessage(CONTENT_SCRIPT.INITIALIZE);

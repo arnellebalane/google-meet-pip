@@ -1,4 +1,4 @@
-import { CONTENT_SCRIPT, PAGE_ACTION, ERROR_UNKNOWN_TYPE, ERROR_NO_ACTIVE_TAB } from './lib/constants';
+import { CONTENT_SCRIPT, PAGE_ACTION, ERROR } from './lib/constants';
 import { createChromeMessageHandler, sendChromeTabsMessage } from './lib/extension-utils';
 
 createChromeMessageHandler(async (message, sender) => {
@@ -12,7 +12,7 @@ createChromeMessageHandler(async (message, sender) => {
       // to identify the active tab in the active window ourselves.
       const activeTab = await getActiveTab();
       if (!activeTab) {
-        throw new Error(ERROR_NO_ACTIVE_TAB);
+        throw new Error(ERROR.NO_ACTIVE_TAB);
       }
 
       const handlers = {
@@ -22,7 +22,7 @@ createChromeMessageHandler(async (message, sender) => {
       return handlers[message.type]();
   }
 
-  throw new Error(ERROR_UNKNOWN_TYPE);
+  throw new Error(ERROR.UNKNOWN_TYPE);
 });
 
 function initializeExtensionForTab(tab) {

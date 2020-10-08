@@ -1,4 +1,4 @@
-import { STATUS_SUCCESS, STATUS_FAILED } from './constants';
+import { STATUS } from './constants';
 
 export function createChromeMessageHandler(handler) {
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -14,14 +14,14 @@ export function createChromeMessageHandler(handler) {
       }
     })
       .then((data) => {
-        const response = { status: STATUS_SUCCESS };
+        const response = { status: STATUS.SUCCESS };
         if (data) {
           response.data = data;
         }
         sendResponse(response);
       })
       .catch((error) => {
-        const response = { status: STATUS_FAILED };
+        const response = { status: STATUS.FAIL };
         if (error) {
           // Handle both Error objects and error strings.
           response.error = error.message || error;
@@ -41,9 +41,9 @@ export function sendChromeRuntimeMessage(type, data = null) {
   return new Promise((resolve, reject) => {
     chrome.runtime.sendMessage({ type, data }, (response) => {
       switch (response.status) {
-        case STATUS_SUCCESS:
+        case STATUS.SUCCESS:
           return resolve(response.data);
-        case STATUS_FAILED:
+        case STATUS.FAIL:
           return reject(response.error);
       }
     });
@@ -55,9 +55,9 @@ export function sendChromeTabsMessage(tabId, type, data = null) {
     const message = { type, data };
     chrome.tabs.sendMessage(tabId, message, (response) => {
       switch (response.status) {
-        case STATUS_SUCCESS:
+        case STATUS.SUCCESS:
           return resolve(response.data);
-        case STATUS_FAILED:
+        case STATUS.FAIL:
           return reject(response.error);
       }
     });
