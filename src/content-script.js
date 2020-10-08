@@ -16,7 +16,11 @@ onMessageChromeRuntime(async (message, sender) => {
         return result;
       }
       throw new Error(ERROR.OPERATION_FAILED);
+
+    case CONTENT_SCRIPT.EXIT_PICTURE_IN_PICTURE:
+      return exitPictureInPicture();
   }
+
   throw new Error(ERROR.UNKNOWN_TYPE);
 });
 
@@ -107,4 +111,8 @@ async function activatePictureInPicture(participant) {
     console.error('[google-meet-pip]', error);
     return false;
   }
+}
+
+function exitPictureInPicture() {
+  return document.exitPictureInPicture();
 }

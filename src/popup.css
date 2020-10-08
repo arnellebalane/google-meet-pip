@@ -46,6 +46,7 @@ body {
   display: block;
   margin-top: 8px;
   margin-bottom: 12px;
+  font-size: 12px;
   color: #555;
 }
 
@@ -80,16 +81,21 @@ body {
   border-left-color: #00796b;
 }
 
-.selection-screen li svg {
+.selection-screen li.active svg {
   display: block;
 }
 
-.selection-screen li path {
-  fill: #00796b;
+.selection-screen li.active:hover path {
+  display: none;
 }
 
-.selection-screen li:hover path {
-  fill: currentColor;
+.selection-screen li.active span {
+  display: none;
+  font-size: 12px;
+}
+
+.selection-screen li.active:hover span {
+  display: block;
 }
 
 /* ERROR SCREEN */

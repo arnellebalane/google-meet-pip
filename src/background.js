@@ -8,6 +8,7 @@ onMessageChromeRuntime(async (message, sender) => {
 
     case PAGE_ACTION.REQUEST_PARTICIPANTS_LIST:
     case PAGE_ACTION.ACTIVATE_PICTURE_IN_PICTURE:
+    case PAGE_ACTION.EXIT_PICTURE_IN_PICTURE:
       // Messages from page action script doesn't have a sender, so we need
       // to identify the active tab in the active window ourselves.
       const activeTab = await getActiveTab();
@@ -18,6 +19,7 @@ onMessageChromeRuntime(async (message, sender) => {
       const handlers = {
         [PAGE_ACTION.REQUEST_PARTICIPANTS_LIST]: () => getParticipantsList(activeTab),
         [PAGE_ACTION.ACTIVATE_PICTURE_IN_PICTURE]: () => activatePictureInPicture(activeTab, message.data),
+        [PAGE_ACTION.EXIT_PICTURE_IN_PICTURE]: () => exitPictureInPicture(activeTab),
       };
       return handlers[message.type]();
   }
@@ -67,4 +69,8 @@ function getParticipantsList(tab) {
 
 function activatePictureInPicture(tab, data) {
   return sendMessageToContentScript(tab.id, CONTENT_SCRIPT.ACTIVATE_PICTURE_IN_PICTURE, data);
+}
+
+function exitPictureInPicture(tab) {
+  return sendMessageToContentScript(tab.id, CONTENT_SCRIPT.EXIT_PICTURE_IN_PICTURE);
 }
