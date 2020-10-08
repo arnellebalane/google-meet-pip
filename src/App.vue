@@ -54,10 +54,12 @@ export default {
     };
 
     const activatePictureInPicture = async (participant) => {
-      try {
-        await sendChromeRuntimeMessage(PAGE_ACTION.ACTIVATE_PICTURE_IN_PICTURE, { participant: participant.id });
-      } catch (error) {
-        console.error(error);
+      if (participant.active) {
+        try {
+          await sendChromeRuntimeMessage(PAGE_ACTION.ACTIVATE_PICTURE_IN_PICTURE, { participant: participant.id });
+        } catch (error) {
+          console.error(error);
+        }
       }
     };
 
