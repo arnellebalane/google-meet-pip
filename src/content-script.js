@@ -13,7 +13,7 @@ createChromeMessageHandler(async (message, sender) => {
     case CONTENT_SCRIPT.ACTIVATE_PICTURE_IN_PICTURE:
       const result = await activatePictureInPicture(message.data.participant);
       if (result) {
-        return true;
+        return result;
       }
       throw new Error(ERROR.OPERATION_FAILED);
   }
@@ -80,6 +80,18 @@ function getParticipantNameForVideo(video) {
 }
 
 async function activatePictureInPicture(participant) {
-  console.log({ participant });
-  return true;
+  // Find the visible video with the matching data-gmpip-id attribute and
+  // enable Picture-in-Picture for it.
+  const videos = [...document.querySelectorAll(`video[data-gmpip-id="${participant}"]`)];
+  const video = videos.find((video) => video.style.display !== 'none');
+  try {
+    await video.requestPictureInPicture();
+    return {
+      id: participant,
+      name: getParticipantNameForVideo(video),
+    };
+  } catch (error) {
+    console.error('[google-meet-pip]', error);
+    return false;
+  }
 }
