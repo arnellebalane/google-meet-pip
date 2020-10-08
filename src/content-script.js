@@ -97,8 +97,8 @@ async function activatePictureInPicture(participant) {
   try {
     await video.requestPictureInPicture();
 
-    // Mark the active video that is currently in PiP mode, so we can identify
-    // it easily when participants list is requested again.
+    // Mark the video that is currently in PiP mode, so we can identify it
+    // easily when participants list is requested again and when exiting PiP.
     video.dataset.gmpipActive = true;
 
     return {
@@ -114,5 +114,9 @@ async function activatePictureInPicture(participant) {
 }
 
 function exitPictureInPicture() {
+  const video = document.querySelector('[data-gmpip-active]');
+  if (video) {
+    delete video.dataset.gmpipActive;
+  }
   return document.exitPictureInPicture();
 }
