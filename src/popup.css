@@ -81,20 +81,36 @@ body {
   border-left-color: #00796b;
 }
 
+.selection-screen li.active:hover {
+  align-items: baseline;
+}
+
+.selection-screen li .name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.selection-screen li .info {
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
 .selection-screen li.active svg {
   display: block;
 }
 
-.selection-screen li.active:hover path {
+.selection-screen li.active:hover svg {
   display: none;
 }
 
-.selection-screen li.active span {
+.selection-screen li.active span.exit {
+  flex-shrink: 0;
   display: none;
   font-size: 12px;
 }
 
-.selection-screen li.active:hover span {
+.selection-screen li.active:hover span.exit {
   display: block;
 }
 
