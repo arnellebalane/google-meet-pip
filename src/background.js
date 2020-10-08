@@ -1,12 +1,5 @@
-import {
-  CONTENT_SCRIPT,
-  PAGE_ACTION,
-  STATUS_SUCCESS,
-  STATUS_FAILED,
-  ERROR_UNKNOWN_TYPE,
-  ERROR_NO_ACTIVE_TAB,
-} from './lib/constants';
-import { createChromeMessageHandler } from './lib/chrome-runtime-utils';
+import { CONTENT_SCRIPT, PAGE_ACTION, ERROR_UNKNOWN_TYPE, ERROR_NO_ACTIVE_TAB } from './lib/constants';
+import { createChromeMessageHandler, sendChromeTabsMessage } from './lib/extension-utils';
 
 createChromeMessageHandler(async (message, sender) => {
   switch (message.type) {
@@ -69,32 +62,9 @@ function getActiveTab() {
 }
 
 function getParticipantsList(tab) {
-  return new Promise((resolve, reject) => {
-    const message = { type: CONTENT_SCRIPT.REQUEST_PARTICIPANTS_LIST };
-    chrome.tabs.sendMessage(tab.id, message, (response) => {
-      switch (response.status) {
-        case STATUS_SUCCESS:
-          return resolve(response.data);
-        case STATUS_FAILED:
-          return reject(response.error);
-      }
-    });
-  });
+  return sendChromeTabsMessage(tab.id, CONTENT_SCRIPT.REQUEST_PARTICIPANTS_LIST);
 }
 
 function activatePictureInPicture(tab, data) {
-  return new Promise((resolve, reject) => {
-    const message = {
-      type: CONTENT_SCRIPT.ACTIVATE_PICTURE_IN_PICTURE,
-      data,
-    };
-    chrome.tabs.sendMessage(tab.id, message, (response) => {
-      switch (response.status) {
-        case STATUS_SUCCESS:
-          return resolve(response.data);
-        case STATUS_FAILED:
-          return reject(response.error);
-      }
-    });
-  });
+  return sendChromeTabsMessage(tab.id, CONTENT_SCRIPT.ACTIVATE_PICTURE_IN_PICTURE, data);
 }

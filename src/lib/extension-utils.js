@@ -49,3 +49,17 @@ export function sendChromeRuntimeMessage(type, data = null) {
     });
   });
 }
+
+export function sendChromeTabsMessage(tabId, type, data = null) {
+  return new Promise((resolve, reject) => {
+    const message = { type, data };
+    chrome.tabs.sendMessage(tabId, message, (response) => {
+      switch (response.status) {
+        case STATUS_SUCCESS:
+          return resolve(response.data);
+        case STATUS_FAILED:
+          return reject(response.error);
+      }
+    });
+  });
+}

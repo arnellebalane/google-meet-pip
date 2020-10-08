@@ -31,7 +31,7 @@
 <script>
 import { ref, onMounted } from 'vue';
 import { PAGE_ACTION, STATUS_SUCCESS, STATUS_FAILED } from './lib/constants';
-import { sendChromeRuntimeMessage } from './lib/chrome-runtime-utils';
+import { sendChromeRuntimeMessage } from './lib/extension-utils';
 
 const STATE = {
   LOADING: 'LOADING',

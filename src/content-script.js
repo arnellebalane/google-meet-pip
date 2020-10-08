@@ -1,5 +1,5 @@
 import { CONTENT_SCRIPT, ERROR_UNKNOWN_TYPE, ERROR_NOT_IN_MEETING, ERROR_OPERATION_FAILED } from './lib/constants';
-import { createChromeMessageHandler, sendChromeRuntimeMessage } from './lib/chrome-runtime-utils';
+import { createChromeMessageHandler, sendChromeRuntimeMessage } from './lib/extension-utils';
 
 createChromeMessageHandler(async (message, sender) => {
   switch (message.type) {
