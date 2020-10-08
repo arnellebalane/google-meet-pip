@@ -58,7 +58,8 @@ body {
 }
 
 .selection-screen li {
-  padding: 6px 8px;
+  padding: 6px 8px 6px 6px;
+  border-left: 2px solid transparent;
   cursor: pointer;
 }
 
@@ -70,6 +71,25 @@ body {
 .selection-screen li.disabled {
   cursor: not-allowed;
   opacity: 0.5;
+}
+
+.selection-screen li.active {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-left-color: #00796b;
+}
+
+.selection-screen li svg {
+  display: block;
+}
+
+.selection-screen li path {
+  fill: #00796b;
+}
+
+.selection-screen li:hover path {
+  fill: currentColor;
 }
 
 /* ERROR SCREEN */

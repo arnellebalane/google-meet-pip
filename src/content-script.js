@@ -100,6 +100,8 @@ async function activatePictureInPicture(participant) {
     return {
       id: participant,
       name: getParticipantNameForVideo(video),
+      active: true,
+      available: true,
     };
   } catch (error) {
     console.error('[google-meet-pip]', error);
