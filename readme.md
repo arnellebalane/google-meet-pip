@@ -15,7 +15,9 @@ Display a selected Google Meet participant's video in a Picture-in-Picture windo
 
 ## Installation
 
-This extension is currently under review in the Chrome Web Store, so for now to use it we need to build and load it manually using the following steps:
+This extension can be installed from the Chrome Web Store: [Google Meet PiP](https://chrome.google.com/webstore/detail/google-meet-pip/ibkkdnfblcekolaagnljieekcaccfpjo)
+
+You can also build and load the extension manually using the following steps:
 
 ```
 # Clone the repository
