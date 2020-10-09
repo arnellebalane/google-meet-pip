@@ -13,7 +13,9 @@ Display a selected Google Meet participant's video in a Picture-in-Picture windo
 
 - In this version, only the participants that are displayed that are visible in the main meeting layout can be selected to be displayed in a Picture-in-Picture window
 
-## Contributing
+## Installation
+
+This extension is currently under review in the Chrome Web Store, so for now to use it we need to build and load it manually using the following steps:
 
 ```
 # Clone the repository
@@ -28,7 +30,7 @@ npm run build
 npm run watch  # useful for development
 ```
 
-After following the steps above, load the unpacked copy of this extension into your browser.
+After loading and building the project, load the unpacked copy of this extension into your browser.
 
 - Go to [`chrome://extensions`](chrome://extensions)
 - Toggle the "Developer mode" on at the top-right corner of the page
@@ -36,3 +38,9 @@ After following the steps above, load the unpacked copy of this extension into y
 - Browse to the repository and select the `manifest.json` file
 - You should now have development version of the extension!
 - Go to [https://meet.google.com/](https://meet.google.com/) and enjoy building and testing the extension!
+
+## Contributing
+
+- Fork this repository into your Github account
+- Follow the installation steps above to run a development version of the extension
+- When ready, open a pull request from your fork into this repository
