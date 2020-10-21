@@ -26,6 +26,16 @@
     </ul>
   </div>
 
+  <div v-if="state === STATE.NOT_SUPPORTED" class="not-supported-screen">
+    <svg width="40" height="40" viewBox="0 0 24 24">
+      <path
+        fill="#c84031"
+        d="M19,11H11V17H19V11M23,19V5C23,3.88 22.1,3 21,3H3A2,2 0 0,0 1,5V19A2,2 0 0,0 3,21H21A2,2 0 0,0 23,19M21,19H3V4.97H21V19Z"
+      />
+    </svg>
+    <p>Picture-in-Picture is currently not supported by your browser</p>
+  </div>
+
   <div v-if="state === STATE.ERROR" class="error-screen">
     <svg width="40" height="40" viewBox="0 0 24 24">
       <path
@@ -40,13 +50,14 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import { PAGE_ACTION } from './lib/constants';
+import { PAGE_ACTION, ERROR } from './lib/constants';
 import { sendMessageToBackgroundScript } from './lib/extension-utils';
 
 const STATE = {
   LOADING: 'LOADING',
   SELECTION: 'SELECTION',
   ERROR: 'ERROR',
+  NOT_SUPPORTED: 'NOT_SUPPORTED',
 };
 
 export default {
@@ -59,7 +70,11 @@ export default {
         participants.value = await sendMessageToBackgroundScript(PAGE_ACTION.REQUEST_PARTICIPANTS_LIST);
         state.value = STATE.SELECTION;
       } catch (error) {
-        state.value = STATE.ERROR;
+        if (error === ERROR.NOT_SUPPORTED) {
+          state.value = STATE.NOT_SUPPORTED;
+        } else {
+          state.value = STATE.ERROR;
+        }
       }
     };
 

@@ -1,6 +1,11 @@
 import { CONTENT_SCRIPT, ERROR } from './lib/constants';
 import { onMessageChromeRuntime, sendMessageToBackgroundScript } from './lib/extension-utils';
 
+sendMessageToBackgroundScript(CONTENT_SCRIPT.PICTURE_IN_PICTURE_SUPPORT, {
+  supported: Boolean(document.pictureInPictureEnabled),
+});
+sendMessageToBackgroundScript(CONTENT_SCRIPT.INITIALIZE);
+
 if (document.pictureInPictureEnabled) {
   onMessageChromeRuntime(async (message, sender) => {
     switch (message.type) {
@@ -24,10 +29,6 @@ if (document.pictureInPictureEnabled) {
 
     throw new Error(ERROR.UNKNOWN_TYPE);
   });
-
-  sendMessageToBackgroundScript(CONTENT_SCRIPT.INITIALIZE);
-} else {
-  console.log('[google-meet-pip] Your browser does not support the Picture-in-Picture API');
 }
 
 function getParticipantsList() {

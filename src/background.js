@@ -5,10 +5,17 @@ onMessageChromeRuntime(async (message, sender) => {
   switch (message.type) {
     case CONTENT_SCRIPT.INITIALIZE:
       return initializeExtensionForTab(sender.tab);
+    case CONTENT_SCRIPT.PICTURE_IN_PICTURE_SUPPORT:
+      return pictureInPictureSupport(message.data);
 
     case PAGE_ACTION.REQUEST_PARTICIPANTS_LIST:
     case PAGE_ACTION.ACTIVATE_PICTURE_IN_PICTURE:
     case PAGE_ACTION.EXIT_PICTURE_IN_PICTURE:
+      const supported = await isPictureInPictureSupported();
+      if (!supported) {
+        throw new Error(ERROR.NOT_SUPPORTED);
+      }
+
       // Messages from page action script doesn't have a sender, so we need
       // to identify the active tab in the active window ourselves.
       const activeTab = await getActiveTab();
@@ -46,6 +53,18 @@ function initializeExtensionForTab(tab) {
       }
     };
     chrome.tabs.onUpdated.addListener(onUpdatedListener);
+  });
+}
+
+function pictureInPictureSupport({ supported }) {
+  return new Promise((resolve) => {
+    chrome.storage.local.set({ supported }, resolve);
+  });
+}
+
+function isPictureInPictureSupported() {
+  return new Promise((resolve) => {
+    chrome.storage.local.get(['supported'], (result) => resolve(Boolean(result.supported)));
   });
 }
 

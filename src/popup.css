@@ -114,13 +114,16 @@ body {
   display: block;
 }
 
+/* NOT SUPPORTED SCREEN */
 /* ERROR SCREEN */
 
+.not-supported-screen svg,
 .error-screen svg {
   display: block;
   margin: auto;
 }
 
+.not-supported-screen p,
 .error-screen p {
   margin-top: 8px;
 }
