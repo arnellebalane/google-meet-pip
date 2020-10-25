@@ -6,6 +6,7 @@
   "scripts": {
     "build": "NODE_ENV=production webpack",
     "watch": "webpack --watch",
+    "prettier": "prettier src/** *.md *.json --write",
     "zip": "zip -r google-meet-pip.zip manifest.json dist assets/icon-*"
   },
   "keywords": [],
@@ -29,5 +30,13 @@
   },
   "dependencies": {
     "vue": "3.0.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*": "prettier --write"
   }
 }
