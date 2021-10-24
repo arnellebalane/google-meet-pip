@@ -2,25 +2,37 @@
   <div v-if="state === STATE.LOADING" class="loading-screen"></div>
 
   <div v-if="state === STATE.SELECTION" class="selection-screen">
-    <p>Choose the participant to place in Picture-in-Picture window</p>
-    <small>Only the participants that are visible on your screen can be selected</small>
+    <div class="header">
+      <img v-bind:src="'../assets/icon-128.png'" class="logo" />
+      <h1>Google Meet PiP</h1>
+    </div>
+    <div class="hr"></div>
+    <div class="instructions">
+      <p>Choose the participant to place in Picture-in-Picture window</p>
+      <small>Only the participants that are visible on your screen can be selected</small>
+    </div>
+    <div class="hr"></div>
     <ul>
       <li
         v-for="participant in participants"
         :key="participant.id"
-        :class="{ disabled: !participant.available, active: participant.active }"
+        v-bind:class="{ disabled: !participant.available, active: participant.active }"
         @click="handleParticipantClick(participant)"
       >
         <span class="name">{{ participant.name }}</span>
 
-        <div v-if="participant.active" class="info">
+        <div v-if="!participant.active" class="enter">
+          <span class="caption">click to open</span>
           <svg width="16" height="16" viewBox="0 0 24 24">
             <path
               fill="#00796b"
               d="M19,11H11V17H19V11M23,19V5C23,3.88 22.1,3 21,3H3A2,2 0 0,0 1,5V19A2,2 0 0,0 3,21H21A2,2 0 0,0 23,19M21,19H3V4.97H21V19Z"
             />
           </svg>
-          <span class="exit">click to exit</span>
+        </div>
+
+        <div v-if="participant.active" class="exit">
+          <span class="caption">click to exit</span>
         </div>
       </li>
     </ul>

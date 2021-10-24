@@ -7,7 +7,7 @@
 
 body {
   width: 250px;
-  padding: 8px;
+  padding: 16px;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji',
     'Segoe UI Emoji', 'Segoe UI Symbol';
@@ -40,9 +40,33 @@ body {
   animation: rotate 1s linear infinite;
 }
 
-/* SELECTION SCREEN */
+/* Header */
+.header {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+}
 
-.selection-screen small {
+.header .logo {
+  width: 16px;
+  margin-right: 4px;
+}
+.header h1 {
+  font-size: 16px;
+}
+
+.hr {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  margin-left: -16px;
+  margin-right: -16px;
+}
+
+.instructions {
+  margin-top: 10px;
+  margin-bottom: 6px;
+}
+
+.instructions small {
   display: block;
   margin-top: 8px;
   margin-bottom: 12px;
@@ -50,21 +74,23 @@ body {
   color: #555;
 }
 
+/* SELECTION SCREEN */
+
 .selection-screen ul {
   padding: 0;
   padding-top: 8px;
   margin: 0 -8px;
-  border-top: 1px solid #eee;
   list-style: none;
 }
 
 .selection-screen li {
   padding: 6px 8px 6px 6px;
   border-left: 2px solid transparent;
+  border-radius: 20px;
   cursor: pointer;
 }
 
-.selection-screen li:not(.disabled):hover {
+.selection-screen li.active {
   color: #fff;
   background-color: #00796b;
 }
@@ -74,15 +100,10 @@ body {
   opacity: 0.5;
 }
 
-.selection-screen li.active {
+.selection-screen li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-left-color: #00796b;
-}
-
-.selection-screen li.active:hover {
-  align-items: baseline;
 }
 
 .selection-screen li .name {
@@ -91,27 +112,35 @@ body {
   text-overflow: ellipsis;
 }
 
-.selection-screen li .info {
+.selection-screen li .exit {
+  display: flex;
+  align-items: center;
   flex-shrink: 0;
   margin-left: 8px;
 }
 
-.selection-screen li.active svg {
+.selection-screen li .enter {
+  display: none;
+}
+.selection-screen li:hover .enter {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.selection-screen li svg {
   display: block;
 }
 
-.selection-screen li.active:hover svg {
-  display: none;
-}
-
-.selection-screen li.active span.exit {
+.selection-screen li span.caption {
   flex-shrink: 0;
-  display: none;
   font-size: 12px;
 }
 
-.selection-screen li.active:hover span.exit {
-  display: block;
+.selection-screen li .enter span.caption {
+  margin-right: 4px;
+  color: rgb(100, 100, 100);
 }
 
 /* NOT SUPPORTED SCREEN */
