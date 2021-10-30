@@ -140,17 +140,22 @@ function onLeavePictureInPicture(event) {
 }
 
 let disableMicrophoneControl;
+let disableCameraControl;
 
 function enableVideoConferencingControls() {
   if (!navigator.mediaSession) {
     return;
   }
   disableMicrophoneControl = enableMicrophoneControl();
+  disableCameraControl = enableCameraControl();
 }
 
 function disableVideoConferencingControls() {
   if (typeof disableMicrophoneControl === 'function') {
     disableMicrophoneControl();
+  }
+  if (typeof disableCameraControl === 'function') {
+    disableCameraControl();
   }
 }
 
@@ -186,6 +191,45 @@ function getMicrophoneControl() {
 
 function syncMicrophoneState(control) {
   navigator.mediaSession.setMicrophoneActive(isControlActive(control));
+}
+
+function enableCameraControl() {
+  const control = getCameraControl();
+
+  navigator.mediaSession.setActionHandler('togglecamera', () => {
+    control.click();
+    setTimeout(() => syncCameraState(control), 0);
+  });
+  syncCameraState(control);
+
+  let observer;
+  if ('MutationObserver' in window) {
+    observer = new MutationObserver(() => syncCameraState(control));
+    observer.observe(control, {
+      attributes: true,
+      attributeFilter: ['data-is-muted'],
+    });
+  }
+
+  return () => {
+    navigator.mediaSession.setActionHandler('togglecamera', null);
+    if (observer) {
+      observer.disconnect();
+    }
+  };
+}
+
+function getCameraControl() {
+  return document.querySelectorAll(`[aria-label][data-is-muted]`)[1];
+}
+
+function syncCameraState(control) {
+  if (isControlActive(control)) {
+    navigator.mediaSession.setCameraActive(true);
+  } else {
+    navigator.mediaSession.setCameraActive(false);
+    exitPictureInPicture();
+  }
 }
 
 function isControlActive(control) {
