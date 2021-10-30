@@ -110,6 +110,9 @@ async function activatePictureInPicture(participant) {
     // we need to unmark it as the active video.
     video.addEventListener('leavepictureinpicture', onLeavePictureInPicture);
 
+    // https://web.dev/media-session/#video-conferencing-actions
+    enableVideoConferencingControls();
+
     return {
       id: participant,
       name: getParticipantNameForVideo(video),
@@ -133,4 +136,58 @@ function exitPictureInPicture() {
 
 function onLeavePictureInPicture(event) {
   delete event.target.dataset.gmpipActive;
+  disableVideoConferencingControls();
+}
+
+let disableMicrophoneControl;
+
+function enableVideoConferencingControls() {
+  if (!navigator.mediaSession) {
+    return;
+  }
+  disableMicrophoneControl = enableMicrophoneControl();
+}
+
+function disableVideoConferencingControls() {
+  if (typeof disableMicrophoneControl === 'function') {
+    disableMicrophoneControl();
+  }
+}
+
+function enableMicrophoneControl() {
+  const control = getMicrophoneControl();
+
+  navigator.mediaSession.setActionHandler('togglemicrophone', () => {
+    control.click();
+    setTimeout(() => syncMicrophoneState(control), 0);
+  });
+  syncMicrophoneState(control);
+
+  let observer;
+  if ('MutationObserver' in window) {
+    observer = new MutationObserver(() => syncMicrophoneState(control));
+    observer.observe(control, {
+      attributes: true,
+      attributeFilter: ['data-is-muted'],
+    });
+  }
+
+  return () => {
+    navigator.mediaSession.setActionHandler('togglemicrophone', null);
+    if (observer) {
+      observer.disconnect();
+    }
+  };
+}
+
+function getMicrophoneControl() {
+  return document.querySelectorAll(`[aria-label][data-is-muted]`)[0];
+}
+
+function syncMicrophoneState(control) {
+  navigator.mediaSession.setMicrophoneActive(isControlActive(control));
+}
+
+function isControlActive(control) {
+  return !JSON.parse(control.dataset.isMuted);
 }
