@@ -216,6 +216,7 @@ function onLeavePictureInPicture(event) {
 
 let disableMicrophoneControl;
 let disableCameraControl;
+let disableHangupControl;
 
 function enableVideoConferencingControls() {
   if (!navigator.mediaSession) {
@@ -223,6 +224,7 @@ function enableVideoConferencingControls() {
   }
   disableMicrophoneControl = enableMicrophoneControl();
   disableCameraControl = enableCameraControl();
+  disableHangupControl = enableHangupControl();
 }
 
 function disableVideoConferencingControls() {
@@ -231,6 +233,9 @@ function disableVideoConferencingControls() {
   }
   if (typeof disableCameraControl === 'function') {
     disableCameraControl();
+  }
+  if (typeof disableHangupControl === 'function') {
+    disableHangupControl();
   }
 }
 
@@ -305,6 +310,35 @@ function syncCameraState(control) {
     navigator.mediaSession.setCameraActive(false);
     exitPictureInPicture();
   }
+}
+
+function enableHangupControl() {
+  const control = getHangupControl();
+  console.log(control);
+
+  navigator.mediaSession.setActionHandler('hangup', () => {
+    exitPictureInPicture();
+    control.click();
+
+    setTimeout(() => {
+      const hangup = getHangupDialogControl();
+      hangup.click();
+    }, 500);
+  });
+
+  return () => {
+    navigator.mediaSession.setActionHandler('hangup', null);
+  };
+}
+
+function getHangupControl() {
+  const icons = [...document.querySelectorAll('.google-material-icons')];
+  return icons.find((icon) => icon.textContent === 'call_end').closest('button');
+}
+
+function getHangupDialogControl() {
+  const dialog = document.querySelector('[role="dialog"]');
+  return dialog.querySelector('button');
 }
 
 function isControlActive(control) {
