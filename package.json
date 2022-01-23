@@ -1,6 +1,6 @@
 {
   "name": "google-meet-pip",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Display a Google Meet video in a Picture-in-Picture window",
   "main": "index.js",
   "scripts": {
