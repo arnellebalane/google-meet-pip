@@ -99,7 +99,13 @@ async function promptUserToEnterPictureInPicture(participantName) {
     // The proper solution to this should be #17 (https://github.com/arnellebalane/google-meet-pip/issues/17)
     // which is to move the user selection into an in-page UI instead of the
     // extension popup UI
+    const currentPopup = document.querySelector('.google-meet-pip-popup');
+    if (currentPopup) {
+      currentPopup.remove();
+    }
+
     const popup = document.createElement('div');
+    popup.classList.add('google-meet-pip-popup');
     popup.style.padding = '24px 24px 16px 24px';
     popup.style.borderRadius = '8px';
     popup.style.position = 'absolute';
