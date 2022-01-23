@@ -31,12 +31,7 @@
   "dependencies": {
     "vue": "3.0.0"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "lint-staged": {
-    "*": "prettier --write"
+    "src/**/*": "prettier --write"
   }
 }
