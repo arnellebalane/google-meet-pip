@@ -93,6 +93,77 @@ function getParticipantNameForVideo(video) {
   return name ? name.textContent : null;
 }
 
+async function promptUserToEnterPictureInPicture(participantName) {
+  return new Promise((resolve, reject) => {
+    // NOTE: TEMPORARY FIX
+    // The proper solution to this should be #17 (https://github.com/arnellebalane/google-meet-pip/issues/17)
+    // which is to move the user selection into an in-page UI instead of the
+    // extension popup UI
+    const popup = document.createElement('div');
+    popup.style.padding = '24px 24px 16px 24px';
+    popup.style.borderRadius = '8px';
+    popup.style.position = 'absolute';
+    popup.style.top = '16px';
+    popup.style.left = '50%';
+    popup.style.zIndex = '10';
+    popup.style.minWidth = '480px';
+    popup.style.maxWidth = '520px';
+    popup.style.fontFamily = '"Google Sans", Roboto, Arial, sans-serif';
+    popup.style.fontSize = '16px';
+    popup.style.backgroundColor = '#fff';
+    popup.style.transform = 'translateX(-50%)';
+
+    const message = document.createElement('p');
+    message.textContent = `Show "${participantName}" in a Picture-in-Picture window?`;
+    message.style.margin = '0';
+
+    const allow = document.createElement('button');
+    allow.textContent = 'Show';
+    allow.style.padding = '8px';
+    allow.style.border = 'none';
+    allow.style.font = 'inherit';
+    allow.style.fontSize = '14px';
+    allow.style.fontWeight = '500';
+    allow.style.letterSpacing = '0.25px';
+    allow.style.color = '#1a73e8';
+    allow.style.background = 'none';
+    allow.style.cursor = 'pointer';
+
+    const cancel = document.createElement('button');
+    cancel.textContent = 'Cancel';
+    cancel.style.padding = '8px';
+    cancel.style.border = 'none';
+    cancel.style.font = 'inherit';
+    cancel.style.fontSize = '14px';
+    cancel.style.fontWeight = '500';
+    cancel.style.letterSpacing = '0.25px';
+    cancel.style.color = '#1a73e8';
+    cancel.style.background = 'none';
+    cancel.style.cursor = 'pointer';
+
+    const actions = document.createElement('div');
+    actions.style.display = 'flex';
+    actions.style.justifyContent = 'flex-end';
+    actions.style.paddingTop = '16px';
+
+    actions.appendChild(allow);
+    actions.appendChild(cancel);
+    popup.appendChild(message);
+    popup.appendChild(actions);
+    document.body.appendChild(popup);
+
+    allow.addEventListener('click', () => {
+      popup.remove();
+      resolve();
+    });
+
+    cancel.addEventListener('click', () => {
+      popup.remove();
+      reject('Operation cancelled.');
+    });
+  });
+}
+
 async function activatePictureInPicture(participant) {
   // Find the visible video with the matching data-gmpip-id attribute and
   // enable PiP for it.
@@ -100,6 +171,10 @@ async function activatePictureInPicture(participant) {
   const video = videos.find((video) => video.style.display !== 'none');
 
   try {
+    const participantName = getParticipantNameForVideo(video);
+
+    // Browsers now require a user gesture to open a PiP window.
+    await promptUserToEnterPictureInPicture(participantName);
     await video.requestPictureInPicture();
 
     // Mark the video that is currently in PiP mode, so we can identify it
@@ -115,7 +190,7 @@ async function activatePictureInPicture(participant) {
 
     return {
       id: participant,
-      name: getParticipantNameForVideo(video),
+      name: participantName,
       active: true,
       available: true,
     };
