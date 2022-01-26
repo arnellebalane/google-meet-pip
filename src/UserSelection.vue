@@ -6,7 +6,13 @@
     </header>
 
     <ul class="users">
-      <li v-for="user in users" :key="user.id" class="user" :class="{ active: user.active, available: user.available }">
+      <li
+        v-for="user in users"
+        :key="user.id"
+        class="user"
+        :class="{ active: user.active, available: user.available }"
+        @click="select(user)"
+      >
         <span class="user-name">{{ user.name }}</span>
         <span v-if="user.active" class="user-active">Currently in Picture-in-Picture</span>
       </li>
@@ -23,12 +29,21 @@ export default defineComponent({
     users: Array,
   },
 
-  setup(props) {
+  setup(props, context) {
     const { open, users } = toRefs(props);
+
+    const select = (user) => {
+      if (user.active) {
+        context.emit('deselect', user);
+      } else if (user.available) {
+        context.emit('select', user);
+      }
+    };
 
     return {
       open,
       users,
+      select,
     };
   },
 });

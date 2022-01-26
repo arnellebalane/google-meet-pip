@@ -1,13 +1,13 @@
 <template>
   <div ref="container" class="container">
     <button class="button" @click="toggle">Google Meet PiP</button>
-    <UserSelection :open="open" :users="users" />
+    <UserSelection :open="open" :users="participants" @select="select" @deselect="deselect" />
   </div>
 </template>
 
 <script>
-import { defineComponent, ref, onMounted, onUnmounted } from 'vue';
-import { getParticipantsList } from './lib/google-meet';
+import { defineComponent, ref, onMounted, onUnmounted, nextTick } from 'vue';
+import { activatePictureInPicture, exitPictureInPicture, getParticipantsList } from './lib/google-meet';
 import UserSelection from './UserSelection.vue';
 
 export default defineComponent({
@@ -17,12 +17,20 @@ export default defineComponent({
 
   setup() {
     const container = ref(null);
-    const users = ref([]);
+    const participants = ref([]);
     const open = ref(false);
 
     const toggle = () => {
-      users.value = getParticipantsList();
+      participants.value = getParticipantsList();
       open.value = !open.value;
+    };
+    const select = async (participant) => {
+      await activatePictureInPicture(participant);
+      participants.value = getParticipantsList();
+    };
+    const deselect = async () => {
+      await exitPictureInPicture();
+      participants.value = getParticipantsList();
     };
 
     const handleClickOutside = (event) => {
@@ -35,21 +43,30 @@ export default defineComponent({
         open.value = false;
       }
     };
+    const handlePictureInPicture = () => {
+      setTimeout(() => (participants.value = getParticipantsList()), 0);
+    };
 
     onMounted(() => {
       document.addEventListener('click', handleClickOutside);
       document.addEventListener('keydown', handleEscapeKey);
+      document.addEventListener('enterpictureinpicture', handlePictureInPicture, { capture: true });
+      document.addEventListener('leavepictureinpicture', handlePictureInPicture, { capture: true });
     });
     onUnmounted(() => {
       document.removeEventListener('click', handleClickOutside);
       document.removeEventListener('keydown', handleEscapeKey);
+      document.removeEventListener('enterpictureinpicture', handlePictureInPicture, { capture: true });
+      document.removeEventListener('leavepictureinpicture', handlePictureInPicture, { capture: true });
     });
 
     return {
       container,
-      users,
+      participants,
       open,
       toggle,
+      select,
+      deselect,
     };
   },
 });
