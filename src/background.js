@@ -1,34 +1,10 @@
-import { CONTENT_SCRIPT, PAGE_ACTION, ERROR } from './lib/constants';
-import { onMessageChromeRuntime, sendMessageToContentScript } from './lib/extension-utils';
+import { CONTENT_SCRIPT, ERROR } from './lib/constants';
+import { onMessageChromeRuntime } from './lib/extension-utils';
 
 onMessageChromeRuntime(async (message, sender) => {
   switch (message.type) {
     case CONTENT_SCRIPT.INITIALIZE:
       return initializeExtensionForTab(sender.tab);
-    case CONTENT_SCRIPT.PICTURE_IN_PICTURE_SUPPORT:
-      return pictureInPictureSupport(message.data);
-
-    case PAGE_ACTION.REQUEST_PARTICIPANTS_LIST:
-    case PAGE_ACTION.ACTIVATE_PICTURE_IN_PICTURE:
-    case PAGE_ACTION.EXIT_PICTURE_IN_PICTURE:
-      const supported = await isPictureInPictureSupported();
-      if (!supported) {
-        throw new Error(ERROR.NOT_SUPPORTED);
-      }
-
-      // Messages from page action script doesn't have a sender, so we need
-      // to identify the active tab in the active window ourselves.
-      const activeTab = await getActiveTab();
-      if (!activeTab) {
-        throw new Error(ERROR.NO_ACTIVE_TAB);
-      }
-
-      const handlers = {
-        [PAGE_ACTION.REQUEST_PARTICIPANTS_LIST]: () => getParticipantsList(activeTab),
-        [PAGE_ACTION.ACTIVATE_PICTURE_IN_PICTURE]: () => activatePictureInPicture(activeTab, message.data),
-        [PAGE_ACTION.EXIT_PICTURE_IN_PICTURE]: () => exitPictureInPicture(activeTab),
-      };
-      return handlers[message.type]();
   }
 
   throw new Error(ERROR.UNKNOWN_TYPE);
@@ -41,6 +17,7 @@ function initializeExtensionForTab(tab) {
     // its current tab.
     const onUpdatedListener = async (tabId, changeInfo, changedTab) => {
       const TAB_STATUS_COMPLETE = 'complete';
+      console.log(tabId, changedTab);
       if (tab.id === tabId && changedTab.status === TAB_STATUS_COMPLETE) {
         // Google Meet meeting URLs are in the format "https://meet.google.com/abc-defg-hij".
         // We want the plugin to be available only in a meeting.
@@ -56,40 +33,8 @@ function initializeExtensionForTab(tab) {
   });
 }
 
-function pictureInPictureSupport({ supported }) {
-  return new Promise((resolve) => {
-    chrome.storage.local.set({ supported }, resolve);
-  });
-}
-
-function isPictureInPictureSupported() {
-  return new Promise((resolve) => {
-    chrome.storage.local.get(['supported'], (result) => resolve(Boolean(result.supported)));
-  });
-}
-
 function enablePageActionForTab(tab) {
   return new Promise((resolve) => {
     chrome.pageAction.show(tab.id, resolve);
   });
-}
-
-function getActiveTab() {
-  return new Promise((resolve) => {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      resolve(tabs[0] || null);
-    });
-  });
-}
-
-function getParticipantsList(tab) {
-  return sendMessageToContentScript(tab.id, CONTENT_SCRIPT.REQUEST_PARTICIPANTS_LIST);
-}
-
-function activatePictureInPicture(tab, data) {
-  return sendMessageToContentScript(tab.id, CONTENT_SCRIPT.ACTIVATE_PICTURE_IN_PICTURE, data);
-}
-
-function exitPictureInPicture(tab) {
-  return sendMessageToContentScript(tab.id, CONTENT_SCRIPT.EXIT_PICTURE_IN_PICTURE);
 }
