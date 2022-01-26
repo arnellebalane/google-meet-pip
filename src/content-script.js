@@ -28,6 +28,7 @@ function waitUntilJoinCall() {
 
 function createRootElement() {
   const root = document.createElement('div');
+  root.classList.add('google-meet-pip-root');
   root.style.display = 'inline-block';
   root.style.width = '40px';
   root.style.height = '40px';
