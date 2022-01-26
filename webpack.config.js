@@ -7,7 +7,6 @@ const isProd = process.env.NODE_ENV === 'production';
 module.exports = {
   entry: {
     background: ['regenerator-runtime/runtime', './src/background.js'],
-    popup: ['regenerator-runtime/runtime', './src/popup.js'],
     'content-script': ['regenerator-runtime/runtime', './src/content-script.js'],
   },
 
@@ -35,6 +34,11 @@ module.exports = {
         exclude: /node_modules/,
         use: ['style-loader', 'css-loader'],
       },
+      {
+        test: /\.png$/,
+        exclude: /node_modules/,
+        use: ['url-loader'],
+      },
     ],
   },
 
@@ -42,7 +46,6 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './src/popup.html',
       filename: 'popup.html',
-      chunks: ['popup'],
     }),
 
     new VueLoaderPlugin(),

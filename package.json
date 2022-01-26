@@ -29,9 +29,10 @@
     "webpack-cli": "4.9.1"
   },
   "dependencies": {
+    "url-loader": "^4.1.1",
     "vue": "3.0.0"
   },
   "lint-staged": {
-    "src/**/*": "prettier --write"
+    "src/**/*.{html,css,js,vue}": "prettier --write"
   }
 }
