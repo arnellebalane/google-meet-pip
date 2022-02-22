@@ -195,7 +195,6 @@ function syncCameraState(control) {
     navigator.mediaSession.setCameraActive(true);
   } else {
     navigator.mediaSession.setCameraActive(false);
-    exitPictureInPicture();
   }
 }
 
