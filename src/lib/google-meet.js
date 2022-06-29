@@ -60,6 +60,15 @@ function getParticipantNameForVideo(video) {
   return name ? name.textContent : null;
 }
 
+function getParticipantNameForActiveVideo() {
+  const video = document.querySelector('[data-gmpip-active]');
+  if (video) {
+    const name = getParticipantNameForVideo(video);
+    return name || null;
+  }
+  return null;
+}
+
 export async function activatePictureInPicture(participant) {
   // Find the visible video with the matching data-gmpip-id attribute and
   // enable PiP for it.
@@ -195,6 +204,9 @@ function syncCameraState(control) {
     navigator.mediaSession.setCameraActive(true);
   } else {
     navigator.mediaSession.setCameraActive(false);
+    if (getParticipantNameForActiveVideo() === 'You') {
+      exitPictureInPicture();
+    }
   }
 }
 
