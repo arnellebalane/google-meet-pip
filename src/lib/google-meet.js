@@ -50,7 +50,7 @@ export function getParticipantsList() {
 
 function getParticipantNameForVideo(video) {
   // First check if this video is displayed in the main grid.
-  const ancestor = video.parentElement.parentElement.parentElement;
+  const ancestor = video.parentElement.parentElement.parentElement.parentElement;
   let name = ancestor.querySelector('[data-self-name]');
   if (!name) {
     // If not, check if this video is the self video at the top-right corner.
