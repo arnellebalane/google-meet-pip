@@ -49,9 +49,18 @@ export function getParticipantsList() {
 }
 
 function getParticipantNameForVideo(video) {
-  const ancestor = video.parentElement.parentElement.parentElement;
+  const ancestor = video.parentElement.parentElement.parentElement.parentElement;
   const name = ancestor.querySelector('[data-self-name]');
   return name ? name.textContent : null;
+}
+
+function getParticipantNameForActiveVideo() {
+  const video = document.querySelector('[data-gmpip-active]');
+  if (video) {
+    const name = getParticipantNameForVideo(video);
+    return name || null;
+  }
+  return null;
 }
 
 export async function activatePictureInPicture(participant) {
@@ -189,7 +198,9 @@ function syncCameraState(control) {
     navigator.mediaSession.setCameraActive(true);
   } else {
     navigator.mediaSession.setCameraActive(false);
-    exitPictureInPicture();
+    if (getParticipantNameForActiveVideo() === 'You') {
+      exitPictureInPicture();
+    }
   }
 }
 
