@@ -50,7 +50,7 @@ export function getParticipantsList() {
 
 function getParticipantNameForVideo(video) {
     const ancestor = video.parentElement.parentElement.parentElement.parentElement;
-    const name = ancestor.querySelector('[data-self-name]');
+    const name = ancestor.querySelector('[data-self-name] [data-tooltip-id]');
     return name ? name.textContent : null;
 }
 
