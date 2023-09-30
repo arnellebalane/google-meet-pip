@@ -6,12 +6,12 @@ A Google Chrome extension that displays a selected Google Meet participant's vid
 
 ## Use Cases
 
-- Keep your video stream in display while presenting something else in your screen
-- Keep a selected participant visible while navigating to other tabs or applications
+-   Keep your video stream in display while presenting something else in your screen
+-   Keep a selected participant visible while navigating to other tabs or applications
 
 ## Limitations
 
-- In this version, only the participants that are displayed that are visible in the main meeting layout can be selected to be displayed in a Picture-in-Picture window
+-   In this version, only the participants that are displayed that are visible in the main meeting layout can be selected to be displayed in a Picture-in-Picture window
 
 ## Installation
 
@@ -34,12 +34,12 @@ npm run watch  # useful for development
 
 After loading and building the project, we load the unpacked copy of this extension into our browser:
 
-- Go to [`chrome://extensions`](chrome://extensions)
-- Toggle the "Developer mode" on at the top-right corner of the page
-- Click on the "Load unpacked" button that appears
-- Browse to the repository from the file browser and open it
-- We should now have development version of the extension!
-- Go to [https://meet.google.com/](https://meet.google.com/) and enjoy building and testing the extension!
+-   Go to [`chrome://extensions`](chrome://extensions)
+-   Toggle the "Developer mode" on at the top-right corner of the page
+-   Click on the "Load unpacked" button that appears
+-   Browse to the repository from the file browser and open it
+-   We should now have development version of the extension!
+-   Go to [https://meet.google.com/](https://meet.google.com/) and enjoy building and testing the extension!
 
 ## Usage
 
@@ -51,9 +51,9 @@ While in a Google Meet meeting, click on the extension's icon to display a list 
 
 Thank you for considering to contribute to this project! Below is a quick overview of how to start contributing:
 
-- Fork this repository into your Github account
-- Follow the installation steps above to run a development version of the extension
-- When ready, open a pull request from your fork into this repository
+-   Fork this repository into your Github account
+-   Follow the installation steps above to run a development version of the extension
+-   When ready, open a pull request from your fork into this repository
 
 For more information about contributing, please read the [Contributing guidelines](contributing.md).
 
