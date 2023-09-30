@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "NODE_ENV=production webpack",
+    "clean": "rm -rf dist",
     "watch": "webpack --watch",
     "prettier": "prettier src/** *.md *.json --write",
     "zip": "zip -r google-meet-pip.zip manifest.json dist assets/icon-*"

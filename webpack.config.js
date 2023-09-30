@@ -1,5 +1,4 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
 
 const isProd = process.env.NODE_ENV === 'production';
@@ -42,12 +41,5 @@ module.exports = {
         ],
     },
 
-    plugins: [
-        new HtmlWebpackPlugin({
-            template: './src/popup.html',
-            filename: 'popup.html',
-        }),
-
-        new VueLoaderPlugin(),
-    ],
+    plugins: [new VueLoaderPlugin()],
 };
