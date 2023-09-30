@@ -2,18 +2,19 @@ export function getParticipantsList() {
     const videos = [...document.querySelectorAll('video')];
     const participants = {};
     for (const video of videos) {
+        const id = getParticipantIdForVideo(video);
         const name = getParticipantNameForVideo(video);
-        if (!name) {
+        if (!id || !name) {
             continue;
         } else if (!participants.hasOwnProperty(name)) {
-            participants[name] = [];
+            participants[id] = { name, videos: [] };
         }
-        participants[name].push(video);
+        participants[id].videos.push(video);
     }
 
     const results = [];
-    for (const name in participants) {
-        const videos = participants[name];
+    for (const id in participants) {
+        const { name, videos } = participants[id];
 
         // A participant is active if they are the one currently in PiP mode.
         const active = videos.some((video) => video.dataset.gmpipActive);
@@ -36,16 +37,19 @@ export function getParticipantsList() {
         /* [2] */ video.readyState === video.HAVE_ENOUGH_DATA, // prettier-ignore
         );
 
-        // We assign an identifier to each participant's videos so we can easily
-        // query them later. Since the names are unique in this case (can be
-        // improved later), using the base64 of the names should be enough for now.
-        const id = btoa(name);
+        // We assign an identifier to each participant's videos so we can
+        // easily query them later.
         videos.forEach((video) => (video.dataset.gmpipId = id));
 
         results.push({ id, name, active, available });
     }
 
     return results;
+}
+
+function getParticipantIdForVideo(video) {
+    const ancestor = video.closest('[data-participant-id]');
+    return ancestor.dataset.participantId;
 }
 
 function getParticipantNameForVideo(video) {
