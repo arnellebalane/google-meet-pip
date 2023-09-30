@@ -1,9 +1,5 @@
 import { createApp, h } from 'vue';
 import ContentScript from './ContentScript.vue';
-import { CONTENT_SCRIPT } from './lib/constants';
-import { sendMessageToBackgroundScript } from './lib/extension-utils';
-
-sendMessageToBackgroundScript(CONTENT_SCRIPT.INITIALIZE);
 
 function waitUntilJoinCall() {
     return new Promise((resolve) => {

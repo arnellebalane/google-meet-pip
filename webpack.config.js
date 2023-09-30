@@ -5,8 +5,7 @@ const isProd = process.env.NODE_ENV === 'production';
 
 module.exports = {
     entry: {
-        background: ['regenerator-runtime/runtime', './src/background.js'],
-        'content-script': ['regenerator-runtime/runtime', './src/content-script.js'],
+        'content-script': ['./src/content-script.js'],
     },
 
     output: {
