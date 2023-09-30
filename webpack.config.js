@@ -37,7 +37,7 @@ module.exports = {
       {
         test: /\.png$/,
         exclude: /node_modules/,
-        use: ['url-loader'],
+        type: 'asset/inline',
       },
     ],
   },
