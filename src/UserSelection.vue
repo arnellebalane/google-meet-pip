@@ -20,33 +20,20 @@
     </aside>
 </template>
 
-<script>
-import { defineComponent, toRefs } from 'vue';
-
-export default defineComponent({
-    props: {
-        open: Boolean,
-        users: Array,
-    },
-
-    setup(props, context) {
-        const { open, users } = toRefs(props);
-
-        const select = (user) => {
-            if (user.active) {
-                context.emit('deselect', user);
-            } else if (user.available) {
-                context.emit('select', user);
-            }
-        };
-
-        return {
-            open,
-            users,
-            select,
-        };
-    },
+<script setup>
+const props = defineProps({
+    open: Boolean,
+    users: Array,
 });
+const emit = defineEmits(['select', 'deselect']);
+
+const select = (user) => {
+    if (user.active) {
+        emit('deselect', user);
+    } else if (user.available) {
+        emit('select', user);
+    }
+};
 </script>
 
 <style scoped>
