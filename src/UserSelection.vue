@@ -85,10 +85,12 @@ const select = (user) => {
 }
 
 .users {
+    max-height: 500px;
     padding: 8px 0;
     margin: 0;
 
     list-style: none;
+    overflow: auto;
 }
 
 .user {
